@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>El Examen Oral · Spanisch-Prüfungstrainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EFF3F8;
+  --card:#FFFFFF;
+  --ink:#13202F;
+  --ink-soft:#5C6B80;
+  --cobalt:#1A56B0;
+  --cobalt-deep:#0E3E86;
+  --cobalt-wash:#E7EEFA;
+  --saffron:#F0A51B;
+  --saffron-wash:#FCF3DF;
+  --coral:#E4572E;
+  --green:#2E8B57;
+  --line:#D9E1EC;
+  --radius:14px;
+  --display:'Fraunces', Georgia, 'Times New Roman', serif;
+  --body:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  font-family:var(--body);
+  background:var(--paper);
+  color:var(--ink);
+  display:flex; flex-direction:column;
+  height:100dvh;
+  overflow:hidden;
+}
+/* ---------- Header ---------- */
+header{
+  background:var(--cobalt-deep);
+  color:#fff;
+  padding:12px 16px 11px;
+  flex:0 0 auto;
+  position:relative;
+  overflow:hidden;
+}
+header::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:0; height:6px;
+  background:
+    linear-gradient(135deg, var(--saffron) 25%, transparent 25%) 0 0/12px 12px,
+    linear-gradient(225deg, var(--saffron) 25%, transparent 25%) 0 0/12px 12px;
+}
+header h1{
+  font-family:var(--display);
+  font-weight:900;
+  font-size:1.35rem;
+  letter-spacing:.01em;
+  line-height:1.1;
+}
+header p{
+  font-size:.75rem;
+  opacity:.85;
+  margin-top:3px;
+}
+/* ---------- Tabs ---------- */
+nav{
+  display:flex;
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+  flex:0 0 auto;
+}
+nav button{
+  flex:1;
+  padding:11px 4px 9px;
+  background:none;
+  border:none;
+  border-bottom:3px solid transparent;
+  font-family:var(--body);
+  font-size:.85rem;
+  font-weight:600;
+  color:var(--ink-soft);
+  cursor:pointer;
+}
+nav button.active{
+  color:var(--cobalt);
+  border-bottom-color:var(--saffron);
+}
+/* ---------- Panels ---------- */
+main{flex:1 1 auto; min-height:0; display:flex; flex-direction:column;}
+.panel{display:none; flex:1 1 auto; min-height:0; flex-direction:column;}
+.panel.active{display:flex;}
+.scrollpane{flex:1 1 auto; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:14px 14px 24px;}
+
+/* ---------- Üben: Modus + Phasen ---------- */
+.mode-row{
+  display:flex; gap:8px; padding:8px 14px 4px; flex:0 0 auto; align-items:center;
+}
+.seg{
+  display:flex; flex:1; background:#E2E8F1; border-radius:999px; padding:3px;
+}
+.seg button{
+  flex:1; border:none; background:transparent; border-radius:999px;
+  padding:7px 6px; font-size:.76rem; font-weight:600; color:var(--ink-soft); cursor:pointer;
+}
+.seg button.on{background:var(--card); color:var(--cobalt); box-shadow:0 1px 3px rgba(19,32,47,.15);}
+.icon-btn{
+  border:1px solid var(--line); background:var(--card); border-radius:999px;
+  width:38px; height:38px; font-size:1rem; cursor:pointer; flex:0 0 auto;
+}
+.icon-btn.on{background:var(--cobalt-wash); border-color:var(--cobalt); color:var(--cobalt);}
+.phase-row{
+  display:flex; gap:6px; padding:7px 14px 5px; flex:0 0 auto;
+}
+.tile{
+  flex:1; background:var(--card); border:1px solid var(--line); border-radius:10px;
+  padding:6px 4px 5px; text-align:center; position:relative;
+}
+.tile .num{
+  font-family:var(--display); font-weight:900; font-size:1rem; color:#B9C4D4; line-height:1;
+}
+.tile .lbl{font-size:.55rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); margin-top:2px;}
+.tile.done .num{color:var(--green);}
+.tile.now{border-color:var(--saffron); background:var(--saffron-wash);}
+.tile.now .num{color:var(--cobalt-deep);}
+
+/* ---------- Bild-Pin ---------- */
+#imgPin{
+  display:none;
+  position:sticky; top:-14px; z-index:5;
+  background:var(--card); border:1px solid var(--line); border-radius:12px;
+  padding:8px 10px; margin:-4px 0 12px;
+  box-shadow:0 3px 10px rgba(19,32,47,.10);
+  align-items:center; gap:10px;
+}
+#imgPin.show{display:flex;}
+#imgPin img{
+  width:64px; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--line);
+  cursor:pointer; flex:0 0 auto;
+}
+#imgPin .t{flex:1; min-width:0;}
+#imgPin .t b{font-size:.8rem; color:var(--cobalt-deep); display:block;}
+#imgPin .t span{font-size:.72rem; color:var(--ink-soft);}
+#imgPin button{
+  border:1px solid var(--line); background:#F4F7FB; border-radius:999px;
+  font-size:.72rem; padding:5px 10px; cursor:pointer; color:var(--cobalt-deep); font-weight:600; flex:0 0 auto;
+}
+/* Vollbild-Ansicht */
+#lightbox{
+  display:none; position:fixed; inset:0; z-index:50;
+  background:rgba(10,18,30,.92); align-items:center; justify-content:center; flex-direction:column; gap:14px;
+  padding:20px;
+}
+#lightbox.show{display:flex;}
+#lightbox img{max-width:100%; max-height:80vh; border-radius:10px;}
+#lightbox button{
+  border:none; background:var(--card); border-radius:999px; padding:10px 22px;
+  font-weight:700; color:var(--cobalt-deep); cursor:pointer; font-size:.9rem;
+}
+
+/* ---------- Chat ---------- */
+#chat{display:flex; flex-direction:column; gap:10px;}
+.msg{max-width:88%; border-radius:var(--radius); padding:10px 13px; font-size:.93rem; line-height:1.45; position:relative;}
+.msg.tutor{align-self:flex-start; background:var(--card); border:1px solid var(--line); border-top-left-radius:4px;}
+.msg.tutor .es{font-size:1rem;}
+.msg.user{align-self:flex-end; background:var(--cobalt); color:#fff; border-top-right-radius:4px;}
+.msg.user img{max-width:100%; border-radius:8px; display:block;}
+.msg .tools{margin-top:7px; display:flex; gap:6px;}
+.msg .tools button{
+  border:1px solid var(--line); background:#F4F7FB; border-radius:999px;
+  font-size:.72rem; padding:3px 10px; cursor:pointer; color:var(--cobalt-deep); font-weight:600;
+}
+.tip{
+  align-self:flex-start; max-width:88%;
+  background:var(--saffron-wash); border-left:4px solid var(--saffron);
+  border-radius:8px; padding:9px 12px; font-size:.83rem; line-height:1.5; color:#5A4308;
+}
+.tip b.h{display:block; font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:3px; color:#8A6A10;}
+.sysnote{
+  align-self:center; text-align:center; font-size:.78rem; color:var(--ink-soft);
+  background:#E7ECF3; border-radius:8px; padding:7px 12px; max-width:92%;
+}
+.sysnote.err{background:#FBE9E3; color:#8C2F12;}
+#typing{align-self:flex-start; display:none; color:var(--ink-soft); font-size:.85rem; padding:4px 6px;}
+#typing.show{display:block;}
+
+/* ---------- Startscreen ---------- */
+.start{
+  display:flex; flex-direction:column; align-items:center; gap:12px; padding:22px 18px; text-align:center;
+}
+.start .big{
+  font-family:var(--display); font-weight:700; font-size:1.25rem; color:var(--cobalt-deep); line-height:1.3;
+}
+.start p{font-size:.86rem; color:var(--ink-soft); max-width:360px; line-height:1.5;}
+.cta{
+  border:none; background:var(--cobalt); color:#fff; font-weight:700; font-size:.95rem;
+  border-radius:999px; padding:13px 24px; cursor:pointer; box-shadow:0 3px 10px rgba(26,86,176,.35);
+  width:min(320px, 90%);
+}
+.cta.alt{background:var(--card); color:var(--cobalt); border:2px solid var(--cobalt); box-shadow:none;}
+
+/* ---------- Composer ---------- */
+#composer{
+  flex:0 0 auto;
+  background:var(--card);
+  border-top:1px solid var(--line);
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  display:flex; gap:8px; align-items:flex-end;
+}
+#composer textarea{
+  flex:1; resize:none; border:1.5px solid var(--line); border-radius:18px;
+  padding:10px 14px; font-family:var(--body); font-size:.95rem; line-height:1.35;
+  max-height:110px; min-height:42px; outline:none; background:#F7FAFD; color:var(--ink);
+}
+#composer textarea:focus{border-color:var(--cobalt);}
+#micBtn{
+  flex:0 0 auto; width:52px; height:52px; border-radius:50%;
+  border:none; background:var(--cobalt); color:#fff; font-size:1.35rem; cursor:pointer;
+  position:relative; box-shadow:0 3px 8px rgba(26,86,176,.35);
+}
+#micBtn.rec{background:var(--coral); box-shadow:0 0 0 0 rgba(228,87,46,.5); animation:pulse 1.4s infinite;}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(228,87,46,.45);}
+  70%{box-shadow:0 0 0 14px rgba(228,87,46,0);}
+  100%{box-shadow:0 0 0 0 rgba(228,87,46,0);}
+}
+#camBtn{
+  flex:0 0 auto; width:44px; height:44px; border-radius:50%;
+  border:1.5px solid var(--line); background:#F4F7FB; font-size:1.1rem; cursor:pointer;
+}
+#sendBtn{
+  flex:0 0 auto; width:44px; height:44px; border-radius:50%;
+  border:none; background:var(--saffron); color:#3D2E00; font-size:1.1rem; cursor:pointer; font-weight:700;
+}
+#sendBtn:disabled{opacity:.4;}
+.action-row{
+  flex:0 0 auto; display:flex; gap:8px; padding:6px 14px; overflow-x:auto;
+}
+.chip{
+  border:1px solid var(--line); background:var(--card); border-radius:999px;
+  font-size:.75rem; font-weight:600; padding:6px 12px; color:var(--cobalt-deep);
+  cursor:pointer; white-space:nowrap;
+}
+.chip.warn{color:var(--coral); border-color:#F0C4B5;}
+
+/* ---------- Musterlösung ---------- */
+.doc h2{
+  font-family:var(--display); font-weight:700; font-size:1.05rem; color:var(--cobalt-deep);
+  margin:20px 0 8px; display:flex; align-items:center; gap:8px;
+}
+.doc h2:first-of-type{margin-top:2px;}
+.doc .block{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:13px 14px; margin-bottom:10px;
+}
+.doc .block p{font-size:.92rem; line-height:1.6; margin-bottom:8px;}
+.doc .block p:last-of-type{margin-bottom:0;}
+.doc h2 .n{
+  background:var(--saffron); color:#3D2E00; border-radius:6px;
+  width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;
+  font-size:.8rem; flex:0 0 auto;
+}
+.doc .block .play-row{margin-top:9px; display:flex; gap:8px;}
+.play-sm{
+  border:1px solid var(--line); background:#F4F7FB; border-radius:999px;
+  font-size:.74rem; padding:5px 12px; cursor:pointer; color:var(--cobalt-deep); font-weight:600;
+}
+.gloss{
+  display:inline-block; background:var(--cobalt-wash); color:var(--cobalt-deep);
+  border-radius:5px; padding:0 5px; font-size:.85em; font-weight:600;
+}
+.hint-card{
+  background:var(--saffron-wash); border-left:4px solid var(--saffron); border-radius:8px;
+  padding:10px 13px; font-size:.83rem; line-height:1.5; color:#5A4308; margin-bottom:14px;
+}
+
+/* ---------- Redemittel ---------- */
+.vocab-controls{display:flex; gap:8px; align-items:center; margin-bottom:12px;}
+.vgroup{margin-bottom:18px;}
+.vgroup h3{
+  font-family:var(--display); font-weight:700; font-size:.98rem; color:var(--cobalt-deep); margin-bottom:7px;
+}
+.vrow{
+  background:var(--card); border:1px solid var(--line); border-radius:10px;
+  padding:9px 12px; margin-bottom:6px;
+  display:flex; align-items:center; gap:10px;
+}
+.vrow .txt{flex:1; min-width:0;}
+.vrow .es{font-size:.92rem; font-weight:600;}
+.vrow .de{font-size:.8rem; color:var(--ink-soft); margin-top:1px;}
+.vrow .sp{
+  border:none; background:var(--cobalt-wash); color:var(--cobalt); border-radius:50%;
+  width:32px; height:32px; cursor:pointer; font-size:.85rem; flex:0 0 auto;
+}
+body.quiz .vrow .es{
+  filter:blur(6px); cursor:pointer; transition:filter .15s;
+}
+body.quiz .vrow.revealed .es{filter:none;}
+@media (min-width:760px){
+  header h1{font-size:1.7rem;}
+  .scrollpane{padding:18px 10vw 30px;}
+  .mode-row,.phase-row,.action-row{padding-left:10vw; padding-right:10vw;}
+  #composer{padding-left:10vw; padding-right:10vw;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>El Examen Oral</h1>
+  <p>Strenger Prüfungstrainer · Bildbeschreibung + „La migración a España“ · Ziel: Note 1</p>
+</header>
+
+<nav>
+  <button class="active" data-tab="uben" onclick="showTab('uben')">🎙️ Üben</button>
+  <button data-tab="muster" onclick="showTab('muster')">📄 Musterlösung</button>
+  <button data-tab="vokabeln" onclick="showTab('vokabeln')">🗂️ Redemittel</button>
+</nav>
+
+<main>
+
+<!-- ============ TAB 1: ÜBEN ============ -->
+<section class="panel active" id="panel-uben">
+
+  <div class="mode-row">
+    <div class="seg">
+      <button id="modeTraining" class="on" onclick="setMode('training')">🔥 Intensiv (sofort korrigieren)</button>
+      <button id="modeSim" onclick="setMode('simulacion')">🎓 Simulation (Note am Ende)</button>
+    </div>
+    <button class="icon-btn on" id="speakToggle" onclick="toggleAutoSpeak()" title="Automatisches Vorlesen an/aus">🔊</button>
+    <button class="icon-btn" id="rateToggle" onclick="toggleRate()" title="Sprechtempo">🐢</button>
+  </div>
+
+  <div class="phase-row" id="phaseRow">
+    <div class="tile now" data-fase="1"><div class="num">1</div><div class="lbl">Descripción</div></div>
+    <div class="tile" data-fase="2"><div class="num">2</div><div class="lbl">Corrección</div></div>
+    <div class="tile" data-fase="3"><div class="num">3</div><div class="lbl">Inmigración</div></div>
+    <div class="tile" data-fase="4"><div class="num">4</div><div class="lbl">Nota</div></div>
+  </div>
+
+  <div class="scrollpane" id="chatPane">
+    <div id="imgPin">
+      <img id="imgPinThumb" src="" alt="Prüfungsbild" onclick="openLightbox()">
+      <div class="t"><b>Dein Prüfungsbild</b><span>Zum Vergrößern antippen</span></div>
+      <button onclick="pickImage()">📷 Wechseln</button>
+    </div>
+    <div id="chat">
+      <div class="start" id="startScreen">
+        <div class="big">Runde 1: Dein Bild, deine Prüfung.</div>
+        <p>Lade das Foto hoch, das du beschreiben willst – der Prüfer sieht es wirklich, stellt dir Fragen per Stimme, korrigiert <b>jeden</b> Fehler und bewertet dich am Ende mit Punkten und Note. Kurze Antworten akzeptiert er nicht. 😉</p>
+        <button class="cta" onclick="pickImage()">📷 Eigenes Bild hochladen & starten</button>
+        <button class="cta alt" onclick="startExam(false)">▶ Ohne Bild starten (Foto 4: der Grenzzaun)</button>
+        <button class="cta alt" onclick="startFree()">💬 Erst eine Frage stellen</button>
+      </div>
+      <div id="typing">… el examinador está pensando</div>
+    </div>
+  </div>
+
+  <div class="action-row" id="actionRow" style="display:none;">
+    <button class="chip" onclick="pickImage()">📷 Neues Bild (neue Runde)</button>
+    <button class="chip" onclick="quickSend('¿Puede repetir la pregunta, por favor?')">🔁 Wiederholen</button>
+    <button class="chip" onclick="quickSend('[AYUDA] Ich hänge fest – gib mir genau EINEN Hinweis, wie ich weitersprechen kann.')">💡 Ein Hinweis</button>
+    <button class="chip warn" onclick="quickSend('[EVALUACION] Beende die Runde jetzt und bewerte mich vollständig mit allen Punktzahlen und deutscher Note.')">🏁 Bewertung</button>
+  </div>
+
+  <div id="composer">
+    <button id="micBtn" onclick="toggleMic()" title="Spanisch sprechen">🎤</button>
+    <textarea id="input" rows="1" placeholder="Habla en español o escribe aquí …"></textarea>
+    <button id="camBtn" onclick="pickImage()" title="Bild hochladen">📷</button>
+    <button id="sendBtn" onclick="sendMessage()" title="Senden">➤</button>
+  </div>
+  <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFile(this.files)">
+</section>
+
+<!-- ============ TAB 2: MUSTERLÖSUNG ============ -->
+<section class="panel" id="panel-muster">
+  <div class="scrollpane">
+    <div class="doc" id="musterDoc">
+      <div class="hint-card">💡 <b>So übst du am besten:</b> Absatz anhören (▶), laut nachsprechen, dann im Tab „Üben“ frei wiedergeben. Die <span class="gloss">blauen Wörter</span> sind Schlüsselvokabeln.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 3: REDEMITTEL ============ -->
+<section class="panel" id="panel-vokabeln">
+  <div class="scrollpane">
+    <div class="vocab-controls">
+      <div class="seg" style="max-width:320px;">
+        <button id="vLearn" class="on" onclick="setQuiz(false)">📖 Lernen</button>
+        <button id="vQuiz" onclick="setQuiz(true)">🃏 Abfragen</button>
+      </div>
+    </div>
+    <div class="hint-card" id="quizHint" style="display:none;">🃏 <b>Abfrage-Modus:</b> Das Spanische ist verdeckt. Sag die Phrase laut auf Spanisch – dann tippe darauf, um dich zu prüfen.</div>
+    <div id="vocabList"></div>
+  </div>
+</section>
+
+</main>
+
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="Prüfungsbild groß">
+  <button>Schließen</button>
+</div>
+
+<script>
+/* =====================================================
+   DATEN: Musterlösung (Foto 4) + Redemittel
+===================================================== */
+const MUSTER = [
+  {
+    titel: "Einleitung & Descripción (Beschreibung)",
+    absaetze: [
+      "Voy a hablar sobre una imagen y el tema de la migración a España. Primero me gustaría describir la imagen.",
+      "Se trata de una foto de colores. Muestra una escena con varias personas. En primer plano a la izquierda se puede ver a un hombre de origen africano que está sentado. Lleva pantalones grises, una chaqueta de color azul oscuro y una mochila negra en la espalda. Tiene el pelo negro y corto. Lo vemos de detrás, entonces no podemos ver su cara. El hombre está mirando lo que está pasando delante de él.",
+      "En el centro de la foto se puede ver un muro con una valla muy alta. Detrás de la valla al fondo hay unos edificios de color beis. Delante de los edificios podemos ver a varias personas en uniformes negros. Están vigilando y patrullando el área mientras once personas de origen africano están escalando la valla.",
+      "Abajo, delante del muro con la valla, se puede ver el suelo que está lleno de basura y rocas."
+    ],
+    gloss: [["la valla","der Zaun"],["el muro","die Mauer"],["vigilar","bewachen"],["escalar","hochklettern"],["la basura","der Müll"],["de detrás","von hinten"]]
+  },
+  {
+    titel: "Interpretación & Contexto (Einordnung)",
+    absaetze: [
+      "Ahora voy a contextualizar la foto y relacionarla con nuestro tema de la migración a España.",
+      "La escena podría tener lugar en Ceuta o Melilla, los dos enclaves españoles en Marruecos. Muestra a personas africanas que quieren cruzar la valla fronteriza para llegar a tierra española. Las personas en uniformes son policías españoles que están vigilando la valla. Por la altura de la valla y el control policial es muy difícil entrar al enclave, pero algunas personas todavía lo intentan porque están desesperados y sin perspectivas del futuro.",
+      "El hombre en primer plano está mirando a los otros. No podemos ver su expresión, pero probablemente es más realista y por eso no intenta escalar la valla. Quizás ha venido a la valla para cruzarla también, pero ahora está desilusionado y no intenta hacerlo.",
+      "En general se puede decir que muchos africanos, sobre todo de Marruecos, Argelia, Senegal, Nigeria y Gambia, emigran o intentan emigrar a España. Lo hacen por motivos diferentes. Muchos buscan una vida mejor en Europa porque en sus países de origen no ven perspectivas del futuro, sufren pobreza y no tienen empleo. Esperan encontrar trabajo y ganar dinero en España para alimentar y ayudar a sus familias. Otros huyen de guerras y violencia o emigran a causa de sequías."
+    ],
+    gloss: [["el enclave","die Exklave/Enklave"],["la valla fronteriza","der Grenzzaun"],["desesperado","verzweifelt"],["desilusionado","enttäuscht"],["huir de","fliehen vor"],["la sequía","die Dürre"],["la pobreza","die Armut"],["el empleo","die Arbeit(sstelle)"]]
+  },
+  {
+    titel: "Comparación (Vergleich der Migrantengruppen)",
+    absaetze: [
+      "Al final me gustaría comentar las diferencias entre los grupos de inmigrantes que vienen a España. Hay tres grupos grandes: personas de Europa, de África y de Latinoamérica.",
+      "Primero, estos tres grupos tienen diferentes motivos de emigrar a España. Como ya he dicho, muchos africanos no tienen buenas perspectivas en sus países de origen y quieren empezar una vida nueva en España con trabajo, acceso a atención médica y más oportunidades. Van a España porque el norte de África está muy cerca de España. (Hinweis: Der letzte Teil der Musterlösung war auf dem Foto abgeschnitten – ergänze eigene Punkte, z. B. gemeinsame Sprache bei Latinos, Arbeit/Studium bei EU-Bürgern.)"
+    ],
+    gloss: [["el motivo","der Grund"],["la atención médica","die medizinische Versorgung"],["las oportunidades","die Chancen"],["como ya he dicho","wie ich schon gesagt habe"]]
+  }
+];
+
+const VOKABELN = [
+  { g: "Position im Bild", items: [
+    ["en primer plano","im Vordergrund"],["en segundo plano","im Hintergrund"],["al fondo","im Hintergrund"],
+    ["en el centro / en medio","in der Mitte"],["junto a","bei"],["al lado de","neben"],
+    ["delante de","vor"],["enfrente de","gegenüber von"],["detrás de","hinter"],
+    ["a la derecha (de)","rechts (von)"],["a la izquierda (de)","links (von)"]
+  ]},
+  { g: "Sagen, was man sieht", items: [
+    ["hay","es gibt / ist / sind"],["se puede(n) ver","kann man sehen"],["podemos ver","können wir sehen"],
+    ["vemos","wir sehen"],["se encuentra(n)","befindet/befinden sich"],
+    ["aparece(n)","erscheint/erscheinen"],["se puede(n) distinguir","kann man ausmachen"]
+  ]},
+  { g: "Farben beschreiben", items: [
+    ["es una imagen en blanco y negro","es ist ein Schwarz-Weiß-Bild"],
+    ["es una imagen de colores","es ist ein farbiges Bild"],
+    ["los colores crean un ambiente alegre/triste","die Farben schaffen eine fröhliche/traurige Stimmung"]
+  ]},
+  { g: "Personen beschreiben", items: [
+    ["parece ser/estar …","scheint … zu sein"],["lleva …","trägt …"],
+    ["está + gerundio","ist gerade dabei, zu …"],["está sonriendo","lächelt gerade"],["está durmiendo","schläft gerade"]
+  ]},
+  { g: "Interpretieren (2. Schritt)", items: [
+    ["es una escena típica / característica de …","ist eine typische Szene von …"],
+    ["es un ejemplo de …","ist ein Beispiel für …"],["representa …","repräsentiert …"],
+    ["se refiere a …","bezieht sich auf …"],["se puede relacionar con …","kann man mit … in Verbindung setzen"],
+    ["llama la atención sobre …","lenkt die Aufmerksamkeit auf …"],["critica …","kritisiert …"],
+    ["expresa …","drückt … aus"],["produce un efecto …","erzeugt einen … Effekt"],
+    ["con esta imagen se quiere decir que …","mit diesem Bild will man sagen, dass …"],
+    ["el objetivo de la imagen es …","das Ziel des Bildes ist es, …"]
+  ]},
+  { g: "Extra: Thema Migration", items: [
+    ["la valla fronteriza","der Grenzzaun"],["cruzar la frontera","die Grenze überqueren"],
+    ["los enclaves españoles","die spanischen Exklaven (Ceuta y Melilla)"],
+    ["la inmigración legal / ilegal","die legale / illegale Einwanderung"],
+    ["los países de origen","die Herkunftsländer"],["las perspectivas del futuro","die Zukunftsperspektiven"],
+    ["sufrir pobreza","unter Armut leiden"],["huir de guerras y violencia","vor Kriegen und Gewalt fliehen"],
+    ["a causa de sequías / del cambio climático","wegen Dürren / des Klimawandels"],
+    ["las oportunidades laborales","die Arbeitsmöglichkeiten"],
+    ["la reunificación familiar","die Familienzusammenführung"],
+    ["la integración","die Integration"],["la discriminación","die Diskriminierung"],
+    ["las ventajas y desventajas","die Vor- und Nachteile"],
+    ["en mi opinión / desde mi punto de vista","meiner Meinung nach"],
+    ["empezar una vida nueva","ein neues Leben anfangen"],
+    ["alimentar a la familia","die Familie ernähren"]
+  ]}
+];
+
+/* =====================================================
+   SYSTEM-PROMPT: der strenge Prüfer
+===================================================== */
+function musterText(){
+  return MUSTER.map(s => s.titel + ":\n" + s.absaetze.join("\n")).join("\n\n");
+}
+function vokabelText(){
+  return VOKABELN.map(g => g.g + ": " + g.items.map(i => i[0] + " = " + i[1]).join("; ")).join("\n");
+}
+function buildSystemPrompt(){
+  const modo = state.mode === "simulacion"
+    ? "MODUS: SIMULATION. Während der Runde (Fasen 1-3) korrigierst du NICHT und 'de' bleibt leer (Ausnahme: [AYUDA]). Du sammelst alle Fehler und bringst sie erst in Fase 4 in der großen Bewertung."
+    : "MODUS: INTENSIV-TRAINING. Korrigiere JEDEN Fehler sofort, direkt nachdem der Schüler fertig gesprochen hat, im Feld 'de': Grammatik (mit kurzer Erklärung), Vokabular (bessere Wörter, natürlichere Ausdrücke), Satzbau, Flüssigkeit, Natürlichkeit. Format in 'de': jede Korrektur als eigene Zeile 'falsch → richtig – Mini-Erklärung'. Gib danach in 'es' die wichtigsten verbesserten Sätze zum Nachsprechen vor: 'Repite, por favor: ...' und lasse sie den Schüler wiederholen, bevor du weitermachst.";
+  return `Du bist ein erfahrener spanischer Prüfer für mündliche Prüfungen und Sprachcoach. Dein EINZIGES Ziel: den Schüler (Muttersprache Deutsch, Spanisch ca. A2/B1) so vorzubereiten, dass er MORGEN in der mündlichen Prüfung die bestmögliche Note (deutsche Note 1) erreicht. Die Prüfung: Bilder beschreiben und danach über Immigration nach Spanien diskutieren. Verhalte dich ab jetzt exakt wie ein echter Prüfer.
+
+DEINE REGELN:
+- Sprich in 'es' NUR Spanisch (klar, freundlich-streng, kurze gesprochene Sätze). Deutsch nur im Feld 'de' oder wenn der Schüler explizit um Erklärung bittet.
+- Akzeptiere NIEMALS kurze Antworten. Fordere immer längere, detailliertere Sätze: '¿Puedes decir algo más sobre ...?', 'Descríbelo con más detalle.'
+- Stelle ständig Nachfragen wie ein echter Prüfer. Fordere Begründungen: '¿Por qué?', 'Justifica tu opinión.'
+- Fordere die Argumente des Schülers heraus (Gegenposition einnehmen), damit er verteidigen lernt.
+- Steigere die Schwierigkeit, sobald der Schüler besser wird.
+- Wenn der Schüler zögert oder [AYUDA] schickt: gib GENAU EINEN Hinweis (in 'de', mit 1 spanischem Beispielsatz zum Nachsprechen), niemals die ganze Antwort.
+- Schlage aktiv die Redemittel unten vor und lobe, wenn der Schüler sie benutzt.
+- Sei fordernd, aber ermutigend – Selbstvertrauen zählt, die Prüfung ist morgen.
+${modo}
+
+ABLAUF JEDER RUNDE (Fasen):
+FASE 1 – DESCRIPCIÓN: Es gibt ein Bild. Entweder hat der Schüler ein eigenes Foto hochgeladen (du siehst es dann in der Nachricht – beziehe dich KONKRET auf Details, die wirklich darauf zu sehen sind, und korrigiere, wenn der Schüler etwas Falsches beschreibt), ODER es gilt das Standardbild Foto 4 (siehe unten), ODER du beschreibst selbst lebhaft in 2-3 spanischen Sätzen ein realistisches neues Prüfungsbild (typisch für deutsche Oberstufen-Spanischprüfungen zum Thema Migration). Sag dann: 'Describe la imagen.' und warte auf die Beschreibung. Verlange die Struktur: primer plano, segundo plano/al fondo, colores, personas, was sie tun.
+FASE 2 – CORRECCIÓN: Korrigiere die komplette Beschreibung (Grammatik, Vokabular, Satzbau, Flüssigkeit, Natürlichkeit) und lass den Schüler die verbesserte Version wiederholen ('Repite la versión mejorada, por favor.'). Erst wenn die Wiederholung gut ist, geh weiter. (Im Simulationsmodus entfällt diese Fase – geh direkt zu Fase 3 und hebe die Korrekturen für Fase 4 auf.)
+FASE 3 – INMIGRACIÓN: Kontextfragen mit steigender Schwierigkeit. Themen: inmigración legal e ilegal, razones económicas, guerras, pobreza, cambio climático, oportunidades laborales, estudios, reunificación familiar, ventajas y desventajas de la inmigración, impacto en España, integración, discriminación, opiniones personales. Beispiele (steigere dich): ¿Por qué muchas personas emigran a España? / ¿Cuáles son las diferencias entre la inmigración legal e ilegal? / ¿Qué problemas pueden tener los inmigrantes? / ¿Qué beneficios aporta la inmigración? / ¿Qué harías tú si fueras inmigrante? / ¿Crees que España debería aceptar más inmigrantes? / ¿Qué soluciones propondrías? Immer nur EINE Frage pro Antwort, immer Follow-ups.
+FASE 4 – EVALUACIÓN: Bewerte wie ein deutscher Lehrer, komplett im Feld 'de', auf Deutsch:
+Gramática: x/10, Vocabulario: x/10, Fluidez: x/10, Pronunciación: x/10, Complejidad: x/10, Confianza: x/10.
+(Hinweis: Die Antworten kommen als Transkript einer Spracherkennung. Falsch erkannte Wörter deuten oft auf Ausspracheprobleme hin – nutze das für die Pronunciación-Einschätzung und sage dazu, dass sie geschätzt ist. Hat der Schüler nur getippt, schreibe 'Pronunciación: nicht bewertbar'.)
+Dann: deutsche Gesamtnote (1-6, mit Tendenz) und EXAKT, was der Schüler bis morgen noch verbessern muss (max. 3 Punkte, konkret, mit Beispielsätzen). Danach starte SOFORT die nächste Runde mit einem anderen Bild: fordere den Schüler auf, über den 📷-Knopf ein neues Foto hochzuladen, oder beschreibe selbst ein neues Bild (Fase 1). Beende die Session NIEMALS von dir aus – nur wenn der Schüler ausdrücklich stopp sagt.
+
+STANDARDBILD (FOTO 4, falls kein eigenes Bild hochgeladen wurde): Ein Mann afrikanischer Herkunft sitzt im Vordergrund links mit dem Rücken zur Kamera (graue Hose, dunkelblaue Jacke, schwarzer Rucksack). In der Mitte ein hoher Grenzzaun (valla), dahinter beige Gebäude und Polizisten in schwarzen Uniformen, die patrouillieren, während elf Menschen afrikanischer Herkunft über den Zaun klettern. Am Boden Müll und Steine. Ort: vermutlich Ceuta oder Melilla.
+
+MUSTERLÖSUNG DES LEHRERS (Niveau-Referenz und Inhaltsziel – daran misst du die Leistung):
+${musterText()}
+
+REDEMITTEL (aktiv einfordern und loben):
+${vokabelText()}
+
+TECHNISCHE BEFEHLE: '[EMPEZAR]' = Runde beginnen (kurz begrüßen, Fase 1 starten). '[EMPEZAR_CON_IMAGEN]' zusammen mit einem Bild = das Bild ist das Prüfungsbild dieser Runde. '[NUEVA_IMAGEN]' mit Bild = neue Runde mit diesem Bild starten. '[EVALUACION]' = sofort Fase 4. '[AYUDA]' = genau ein Hinweis.
+
+ANTWORTFORMAT (STRENG): Antworte AUSSCHLIESSLICH mit einem einzigen JSON-Objekt, ohne Markdown, ohne Text davor oder danach:
+{"es":"was du auf Spanisch sagst (max. 1-4 kurze Sätze, wird laut vorgelesen, keine Aufzählungen/Klammern/Emojis)","de":"deutsches Feedback/Korrekturen/Bewertung oder leerer String","fase":1}
+'fase' ist immer 1, 2, 3 oder 4.`;
+}
+
+/* =====================================================
+   STATE
+===================================================== */
+const state = {
+  mode: "training",
+  autoSpeak: true,
+  rate: 1.0,
+  history: [],
+  busy: false,
+  started: false,
+  fase: 1,
+  imgDataUrl: null
+};
+
+/* =====================================================
+   TABS & UI-Grundfunktionen
+===================================================== */
+function showTab(name){
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("panel-" + name).classList.add("active");
+  stopSpeaking();
+}
+function setMode(m){
+  state.mode = m;
+  document.getElementById("modeTraining").classList.toggle("on", m === "training");
+  document.getElementById("modeSim").classList.toggle("on", m === "simulacion");
+  if(state.started){
+    addSysNote(m === "simulacion"
+      ? "🎓 Simulation: Der Prüfer korrigiert erst am Ende (Button „Bewertung“) – wie im Ernstfall."
+      : "🔥 Intensiv-Training: Jeder Fehler wird sofort korrigiert und du sprichst die verbesserte Version nach.");
+  }
+}
+function toggleAutoSpeak(){
+  state.autoSpeak = !state.autoSpeak;
+  const b = document.getElementById("speakToggle");
+  b.classList.toggle("on", state.autoSpeak);
+  b.textContent = state.autoSpeak ? "🔊" : "🔇";
+  if(!state.autoSpeak) stopSpeaking();
+}
+function toggleRate(){
+  const b = document.getElementById("rateToggle");
+  if(state.rate === 1.0){ state.rate = 0.82; b.classList.add("on"); b.title = "Langsames Tempo aktiv"; }
+  else { state.rate = 1.0; b.classList.remove("on"); b.title = "Sprechtempo"; }
+}
+function setFase(f){
+  state.fase = f;
+  document.querySelectorAll("#phaseRow .tile").forEach(t => {
+    const n = Number(t.dataset.fase);
+    t.classList.toggle("now", n === f);
+    t.classList.toggle("done", n < f);
+  });
+}
+function scrollChat(){
+  const p = document.getElementById("chatPane");
+  requestAnimationFrame(() => { p.scrollTop = p.scrollHeight; });
+}
+
+/* =====================================================
+   CHAT-Rendering
+===================================================== */
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function beforeTyping(el){
+  const chat = document.getElementById("chat");
+  chat.insertBefore(el, document.getElementById("typing"));
+}
+function addUserMsg(text, imgUrl){
+  const d = document.createElement("div");
+  d.className = "msg user";
+  if(imgUrl){
+    const im = document.createElement("img");
+    im.src = imgUrl;
+    d.appendChild(im);
+  }
+  if(text){
+    const t = document.createElement("div");
+    t.textContent = text;
+    if(imgUrl) t.style.marginTop = "7px";
+    d.appendChild(t);
+  }
+  beforeTyping(d); scrollChat();
+}
+function addTutorMsg(es, de){
+  if(es && es.trim()){
+    const d = document.createElement("div");
+    d.className = "msg tutor";
+    d.innerHTML = '<div class="es">' + esc(es) + '</div>' +
+      '<div class="tools"><button onclick="speakEs(this)" data-t="' + esc(es).replace(/"/g,"&quot;") + '">🔊 Anhören</button>' +
+      '<button onclick="speakEsSlow(this)" data-t="' + esc(es).replace(/"/g,"&quot;") + '">🐢 Langsam</button></div>';
+    beforeTyping(d);
+  }
+  if(de && de.trim()){
+    const t = document.createElement("div");
+    t.className = "tip";
+    t.innerHTML = '<b class="h">💡 Korrekturen & Feedback</b>' + esc(de).replace(/\n/g,"<br>");
+    beforeTyping(t);
+  }
+  scrollChat();
+}
+function addSysNote(text, isErr){
+  const d = document.createElement("div");
+  d.className = "sysnote" + (isErr ? " err" : "");
+  d.innerHTML = text;
+  beforeTyping(d); scrollChat();
+}
+function setTyping(on){
+  document.getElementById("typing").classList.toggle("show", on);
+  document.getElementById("sendBtn").disabled = on;
+  scrollChat();
+}
+function removeStart(){
+  const s = document.getElementById("startScreen");
+  if(s) s.remove();
+  document.getElementById("actionRow").style.display = "flex";
+}
+
+/* =====================================================
+   BILD-UPLOAD & Verkleinerung
+===================================================== */
+function pickImage(){
+  document.getElementById("fileInput").click();
+}
+function handleFile(files){
+  if(!files || !files[0]) return;
+  const file = files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 1100;
+      let w = img.width, h = img.height;
+      if(w > MAX || h > MAX){
+        const k = Math.min(MAX / w, MAX / h);
+        w = Math.round(w * k); h = Math.round(h * k);
+      }
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, 0, 0, w, h);
+      let q = 0.82;
+      let dataUrl = c.toDataURL("image/jpeg", q);
+      while(dataUrl.length > 3500000 && q > 0.4){
+        q -= 0.12;
+        dataUrl = c.toDataURL("image/jpeg", q);
+      }
+      onImageReady(dataUrl);
+    };
+    img.onerror = () => addSysNote("⚠️ Das Bild konnte nicht gelesen werden. Versuch ein anderes Format (JPG/PNG).", true);
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+  document.getElementById("fileInput").value = "";
+}
+function onImageReady(dataUrl){
+  state.imgDataUrl = dataUrl;
+  document.getElementById("imgPinThumb").src = dataUrl;
+  document.getElementById("imgPin").classList.add("show");
+  const base64 = dataUrl.split(",")[1];
+  const imgBlock = { type: "image", source: { type: "base64", media_type: "image/jpeg", data: base64 } };
+  if(!state.started){
+    state.started = true;
+    removeStart();
+    sendToTutor([imgBlock, { type: "text", text: "[EMPEZAR_CON_IMAGEN] Das ist mein Prüfungsbild für diese Runde." }], null, dataUrl);
+  } else {
+    sendToTutor([imgBlock, { type: "text", text: "[NUEVA_IMAGEN] Hier ist ein neues Bild – starte damit eine neue Runde." }], null, dataUrl);
+  }
+}
+function openLightbox(){
+  if(!state.imgDataUrl) return;
+  document.getElementById("lightboxImg").src = state.imgDataUrl;
+  document.getElementById("lightbox").classList.add("show");
+}
+function closeLightbox(){
+  document.getElementById("lightbox").classList.remove("show");
+}
+
+/* =====================================================
+   START
+===================================================== */
+function startExam(){
+  if(state.busy || state.started) return;
+  state.started = true;
+  removeStart();
+  sendToTutor("[EMPEZAR]", false);
+}
+function startFree(){
+  if(state.started) return;
+  state.started = true;
+  removeStart();
+  addSysNote("💬 Stell eine Frage (Deutsch oder Spanisch) – oder lade jederzeit mit 📷 dein Prüfungsbild hoch.");
+  document.getElementById("input").focus();
+}
+function quickSend(text){
+  if(!state.started || state.busy) return;
+  sendToTutor(text, !text.startsWith("["));
+}
+function sendMessage(){
+  const inp = document.getElementById("input");
+  const text = inp.value.trim();
+  if(!text || state.busy) return;
+  inp.value = ""; inp.style.height = "auto";
+  if(!state.started){ state.started = true; removeStart(); }
+  sendToTutor(text, true);
+}
+
+/* =====================================================
+   ANTHROPIC API
+===================================================== */
+async function sendToTutor(content, showAsUser, imgUrlForDisplay){
+  if(state.busy) return;
+  state.busy = true;
+  if(showAsUser && typeof content === "string") addUserMsg(content);
+  if(imgUrlForDisplay) addUserMsg("📷 Neues Prüfungsbild", imgUrlForDisplay);
+  state.history.push({ role: "user", content: content });
+  setTyping(true);
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        system: buildSystemPrompt(),
+        messages: state.history
+      })
+    });
+    if(!response.ok) throw new Error("HTTP " + response.status);
+    const data = await response.json();
+    const raw = (data.content || []).map(i => i.type === "text" ? i.text : "").filter(Boolean).join("\n");
+    let es = raw, de = "", fase = state.fase;
+    try{
+      const clean = raw.replace(/```json|```/g, "").trim();
+      const jstart = clean.indexOf("{");
+      const jend = clean.lastIndexOf("}");
+      const parsed = JSON.parse(clean.slice(jstart, jend + 1));
+      es = parsed.es || "";
+      de = parsed.de || "";
+      if(parsed.fase) fase = parsed.fase;
+    }catch(e){ /* Fallback: Rohtext anzeigen */ }
+    state.history.push({ role: "assistant", content: raw });
+    setTyping(false);
+    setFase(fase);
+    addTutorMsg(es, de);
+    if(state.autoSpeak && es) speak(es, "es", state.rate);
+  }catch(err){
+    console.error("Claude API error:", err);
+    setTyping(false);
+    state.history.pop();
+    addSysNote("⚠️ Der Prüfer ist gerade nicht erreichbar. <b>Tipp:</b> Diese App funktioniert am besten direkt im Claude-Chat (Artifact-Vorschau öffnen). Musterlösung 📄 und Redemittel 🗂️ mit Vorlesefunktion gehen aber immer!", true);
+  }
+  state.busy = false;
+}
+
+/* =====================================================
+   TEXT-TO-SPEECH (Spanisch)
+===================================================== */
+let voices = [];
+function loadVoices(){ voices = window.speechSynthesis ? speechSynthesis.getVoices() : []; }
+if(window.speechSynthesis){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+function pickVoice(lang){
+  if(!voices.length) loadVoices();
+  const pref = lang === "es" ? ["es-ES","es-MX","es-US","es"] : ["de-DE","de"];
+  for(const p of pref){
+    const exact = voices.find(v => v.lang === p) || voices.find(v => v.lang && v.lang.startsWith(p));
+    if(exact) return exact;
+  }
+  return null;
+}
+function speak(text, lang, rate){
+  if(!window.speechSynthesis) return;
+  stopSpeaking();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang === "es" ? "es-ES" : "de-DE";
+  const v = pickVoice(lang);
+  if(v) u.voice = v;
+  u.rate = rate || 1.0;
+  speechSynthesis.speak(u);
+}
+function stopSpeaking(){ if(window.speechSynthesis) speechSynthesis.cancel(); }
+function speakEs(btn){ speak(btn.dataset.t, "es", state.rate); }
+function speakEsSlow(btn){ speak(btn.dataset.t, "es", 0.72); }
+
+/* =====================================================
+   SPEECH-TO-TEXT (Spanisch sprechen)
+===================================================== */
+let rec = null, recActive = false, baseText = "";
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function toggleMic(){
+  if(!SR){
+    addSysNote("🎤 Spracheingabe wird von diesem Browser hier nicht unterstützt. <b>Tipp:</b> Öffne die HTML-Datei in <b>Chrome</b> (Handy oder PC) – dort funktioniert das Mikrofon. Du kannst hier trotzdem tippen und alles anhören!", true);
+    return;
+  }
+  if(recActive){ rec.stop(); return; }
+  stopSpeaking();
+  rec = new SR();
+  rec.lang = "es-ES";
+  rec.interimResults = true;
+  rec.continuous = true;
+  const inp = document.getElementById("input");
+  baseText = inp.value ? inp.value + " " : "";
+  rec.onresult = (e) => {
+    let finalT = "", interimT = "";
+    for(let i = 0; i < e.results.length; i++){
+      if(e.results[i].isFinal) finalT += e.results[i][0].transcript + " ";
+      else interimT += e.results[i][0].transcript;
+    }
+    inp.value = (baseText + finalT + interimT).trim();
+    autoGrow(inp);
+  };
+  rec.onerror = (e) => {
+    recActive = false;
+    document.getElementById("micBtn").classList.remove("rec");
+    if(e.error === "not-allowed" || e.error === "service-not-allowed"){
+      addSysNote("🎤 Kein Mikrofon-Zugriff. In der Claude-Vorschau ist das Mikrofon leider oft gesperrt. <b>Lösung:</b> Lade die HTML-Datei herunter und öffne sie in Chrome – oder tippe deine Antworten. Vorlesen 🔊 funktioniert immer!", true);
+    }
+  };
+  rec.onend = () => {
+    recActive = false;
+    document.getElementById("micBtn").classList.remove("rec");
+  };
+  try{
+    rec.start();
+    recActive = true;
+    document.getElementById("micBtn").classList.add("rec");
+  }catch(e){ /* ignore */ }
+}
+
+/* =====================================================
+   Composer-Verhalten
+===================================================== */
+const inputEl = document.getElementById("input");
+function autoGrow(el){ el.style.height = "auto"; el.style.height = Math.min(el.scrollHeight, 110) + "px"; }
+inputEl.addEventListener("input", () => autoGrow(inputEl));
+inputEl.addEventListener("keydown", (e) => {
+  if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+});
+
+/* =====================================================
+   MUSTERLÖSUNG rendern
+===================================================== */
+function renderMuster(){
+  const doc = document.getElementById("musterDoc");
+  MUSTER.forEach((sec, i) => {
+    const h = document.createElement("h2");
+    h.innerHTML = '<span class="n">' + (i + 1) + '</span>' + esc(sec.titel);
+    doc.appendChild(h);
+    const block = document.createElement("div");
+    block.className = "block";
+    sec.absaetze.forEach(a => {
+      const p = document.createElement("p");
+      p.textContent = a;
+      block.appendChild(p);
+    });
+    const gl = document.createElement("p");
+    gl.style.marginTop = "9px";
+    gl.innerHTML = sec.gloss.map(g => '<span class="gloss">' + esc(g[0]) + '</span> ' + esc(g[1])).join(" &nbsp;·&nbsp; ");
+    block.appendChild(gl);
+    const row = document.createElement("div");
+    row.className = "play-row";
+    const full = sec.absaetze.join(" ");
+    const b1 = document.createElement("button");
+    b1.className = "play-sm"; b1.textContent = "▶ Abschnitt anhören";
+    b1.onclick = () => speak(full, "es", state.rate);
+    const b2 = document.createElement("button");
+    b2.className = "play-sm"; b2.textContent = "🐢 Langsam";
+    b2.onclick = () => speak(full, "es", 0.72);
+    const b3 = document.createElement("button");
+    b3.className = "play-sm"; b3.textContent = "⏹ Stopp";
+    b3.onclick = stopSpeaking;
+    row.appendChild(b1); row.appendChild(b2); row.appendChild(b3);
+    block.appendChild(row);
+    doc.appendChild(block);
+  });
+}
+
+/* =====================================================
+   REDEMITTEL rendern + Quiz
+===================================================== */
+function renderVocab(){
+  const list = document.getElementById("vocabList");
+  VOKABELN.forEach(group => {
+    const g = document.createElement("div");
+    g.className = "vgroup";
+    const h = document.createElement("h3");
+    h.textContent = group.g;
+    g.appendChild(h);
+    group.items.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "vrow";
+      row.innerHTML = '<div class="txt"><div class="es">' + esc(item[0]) + '</div><div class="de">' + esc(item[1]) + '</div></div>';
+      const sp = document.createElement("button");
+      sp.className = "sp"; sp.textContent = "🔊";
+      sp.onclick = (e) => { e.stopPropagation(); speak(item[0], "es", 0.9); };
+      row.appendChild(sp);
+      row.onclick = () => { if(document.body.classList.contains("quiz")) row.classList.toggle("revealed"); };
+      g.appendChild(row);
+    });
+    list.appendChild(g);
+  });
+}
+function setQuiz(on){
+  document.body.classList.toggle("quiz", on);
+  document.getElementById("vLearn").classList.toggle("on", !on);
+  document.getElementById("vQuiz").classList.toggle("on", on);
+  document.getElementById("quizHint").style.display = on ? "block" : "none";
+  document.querySelectorAll(".vrow").forEach(r => r.classList.remove("revealed"));
+}
+
+renderMuster();
+renderVocab();
+</script>
+</body>
+</html>
